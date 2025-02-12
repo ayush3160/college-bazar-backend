@@ -1,6 +1,7 @@
-package http
+package routes
 
 import (
+	controllers "college-bazar-backend/controllers"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -10,8 +11,8 @@ import (
 
 func New(r chi.Router, logger *zap.Logger, usersCollection, productsCollection *mongo.Collection) {
 
-	userService := NewUserService(logger, usersCollection)
-	productService := NewProductService(logger, productsCollection)
+	userService := controllers.NewUserService(logger, usersCollection)
+	productService := controllers.NewProductService(logger, productsCollection)
 
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("ok"))

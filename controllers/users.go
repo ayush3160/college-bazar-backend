@@ -1,7 +1,7 @@
-package http
+package controllers
 
 import (
-	"college-bazar-backend/pkg/models"
+	"college-bazar-backend/models"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -35,7 +35,6 @@ func NewUserService(logger *zap.Logger, usersCollection *mongo.Collection) *User
 }
 
 func (us *UserService) Register(w http.ResponseWriter, r *http.Request) {
-	us.logger.Info("register")
 
 	var req struct {
 		Name     string `json:"name"`
@@ -91,7 +90,6 @@ func (us *UserService) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (us *UserService) Login(w http.ResponseWriter, r *http.Request) {
-	us.logger.Info("login")
 
 	var req struct {
 		Email    string `json:"email"`
@@ -129,7 +127,6 @@ func (us *UserService) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (us *UserService) GetCartItems(w http.ResponseWriter, r *http.Request) {
-	us.logger.Info("get cart items")
 
 	userID := r.Context().Value("userID").(string)
 
@@ -148,7 +145,6 @@ func (us *UserService) GetCartItems(w http.ResponseWriter, r *http.Request) {
 }
 
 func (us *UserService) AddProductToCart(w http.ResponseWriter, r *http.Request) {
-	us.logger.Info("add product to cart")
 
 	userID := r.Context().Value("userID").(string)
 	var req struct {
@@ -174,7 +170,6 @@ func (us *UserService) AddProductToCart(w http.ResponseWriter, r *http.Request) 
 }
 
 func (us *UserService) RemoveProductFromCart(w http.ResponseWriter, r *http.Request) {
-	us.logger.Info("remove product from cart")
 
 	userID := r.Context().Value("userID").(string)
 	var req struct {

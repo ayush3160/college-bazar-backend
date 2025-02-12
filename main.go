@@ -1,8 +1,8 @@
 package main
 
 import (
-	httpServer "college-bazar-backend/pkg/http"
-	models "college-bazar-backend/pkg/models"
+	models "college-bazar-backend/models"
+	httpServer "college-bazar-backend/routes"
 	"context"
 	"flag"
 	"log"

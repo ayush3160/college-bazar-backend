@@ -1,7 +1,7 @@
-package http
+package controllers
 
 import (
-	"college-bazar-backend/pkg/models"
+	"college-bazar-backend/models"
 	"context"
 	"encoding/json"
 	"errors"
