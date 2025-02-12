@@ -2,6 +2,7 @@ package routes
 
 import (
 	controllers "college-bazar-backend/controllers"
+	middleware "college-bazar-backend/middlewares"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -24,12 +25,14 @@ func New(r chi.Router, logger *zap.Logger, usersCollection, productsCollection *
 	})
 
 	r.Route("/products", func(r chi.Router) {
+		r.Use(middleware.JwtMiddleware)
 		r.Get("/", productService.GetAllProducts)
 		r.Post("/", productService.CreateProduct)
 		r.Get("/get", productService.GetProductByID)
 	})
 
 	r.Route("/cart", func(r chi.Router) {
+		r.Use(middleware.JwtMiddleware)
 		r.Get("/", userService.GetCartItems)
 		r.Post("/", userService.AddProductToCart)
 		r.Delete("/", userService.RemoveProductFromCart)

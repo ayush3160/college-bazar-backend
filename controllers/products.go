@@ -32,6 +32,9 @@ func (s *ProductService) GetAllProducts(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *ProductService) CreateProduct(w http.ResponseWriter, r *http.Request) {
+
+	userID := r.Context().Value(models.UserIDKey).(primitive.ObjectID)
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -42,6 +45,7 @@ func (s *ProductService) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	product.ID = primitive.NewObjectID()
+	product.CreatedBy = userID
 
 	if _, err := s.productsCollection.InsertOne(ctx, product); err != nil {
 		s.logger.Error("Failed to insert product", zap.Error(err))
@@ -54,6 +58,9 @@ func (s *ProductService) CreateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *ProductService) GetProductByID(w http.ResponseWriter, r *http.Request) {
+
+	userID := r.Context().Value(models.UserIDKey).(primitive.ObjectID)
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -65,7 +72,7 @@ func (s *ProductService) GetProductByID(w http.ResponseWriter, r *http.Request) 
 	}
 
 	var product models.Product
-	err = s.productsCollection.FindOne(ctx, bson.M{"_id": objID}).Decode(&product)
+	err = s.productsCollection.FindOne(ctx, bson.M{"_id": objID, "createdBy": userID}).Decode(&product)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		http.Error(w, "Product not found", http.StatusNotFound)
 		return
@@ -79,17 +86,13 @@ func (s *ProductService) GetProductByID(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *ProductService) GetAllProductsOfUser(w http.ResponseWriter, r *http.Request) {
+
+	userID := r.Context().Value(models.UserIDKey).(primitive.ObjectID)
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	userID := r.URL.Query().Get("userId")
-	objID, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
-		return
-	}
-
-	cursor, err := s.productsCollection.Find(ctx, bson.M{"createdBy": objID})
+	cursor, err := s.productsCollection.Find(ctx, bson.M{"createdBy": userID})
 	if err != nil {
 		s.logger.Error("Failed to fetch products", zap.Error(err))
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -108,6 +111,9 @@ func (s *ProductService) GetAllProductsOfUser(w http.ResponseWriter, r *http.Req
 }
 
 func (s *ProductService) RemoveProduct(w http.ResponseWriter, r *http.Request) {
+
+	userID := r.Context().Value(models.UserIDKey).(primitive.ObjectID)
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -118,7 +124,7 @@ func (s *ProductService) RemoveProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.productsCollection.DeleteOne(ctx, bson.M{"_id": objID})
+	res, err := s.productsCollection.DeleteOne(ctx, bson.M{"_id": objID, "createdBy": userID})
 	if err != nil {
 		s.logger.Error("Failed to delete product", zap.Error(err))
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

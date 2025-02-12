@@ -10,3 +10,9 @@ type User struct {
 	Image    string               `json:"image" bson:"image"`
 	Cart     []primitive.ObjectID `json:"cart" bson:"cart"`
 }
+
+type userID string
+
+var (
+	UserIDKey userID = "userID"
+)

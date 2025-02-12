@@ -105,8 +105,8 @@ func main() {
 
 	logger.Info("Database Name", zap.String("name", dbName))
 
-	if dbName != "" {
-		dbName = "event-trigger"
+	if dbName == "" {
+		dbName = "college-bazar"
 	}
 
 	mongoDb := client.Database(dbName)

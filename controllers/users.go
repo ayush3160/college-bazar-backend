@@ -128,7 +128,7 @@ func (us *UserService) Login(w http.ResponseWriter, r *http.Request) {
 
 func (us *UserService) GetCartItems(w http.ResponseWriter, r *http.Request) {
 
-	userID := r.Context().Value("userID").(string)
+	userID := r.Context().Value(models.UserIDKey)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -146,7 +146,7 @@ func (us *UserService) GetCartItems(w http.ResponseWriter, r *http.Request) {
 
 func (us *UserService) AddProductToCart(w http.ResponseWriter, r *http.Request) {
 
-	userID := r.Context().Value("userID").(string)
+	userID := r.Context().Value(models.UserIDKey)
 	var req struct {
 		ProductID string `json:"productId"`
 	}
@@ -171,7 +171,7 @@ func (us *UserService) AddProductToCart(w http.ResponseWriter, r *http.Request) 
 
 func (us *UserService) RemoveProductFromCart(w http.ResponseWriter, r *http.Request) {
 
-	userID := r.Context().Value("userID").(string)
+	userID := r.Context().Value(models.UserIDKey)
 	var req struct {
 		ProductID string `json:"productId"`
 	}
