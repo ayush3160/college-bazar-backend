@@ -114,12 +114,13 @@ func main() {
 	// Create Collections
 	usersCollection := mongoDb.Collection("users")
 	productsCollection := mongoDb.Collection("products")
+	chatsCollection := mongoDb.Collection("chats")
 
 	serverCtx := context.Background()
 
 	r := chi.NewRouter()
 
-	httpServer.New(r, logger, usersCollection, productsCollection)
+	httpServer.New(r, logger, usersCollection, productsCollection, chatsCollection)
 
 	server := &http.Server{
 		Addr:    ":" + port,

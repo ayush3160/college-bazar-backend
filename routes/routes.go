@@ -10,10 +10,11 @@ import (
 	"go.uber.org/zap"
 )
 
-func New(r chi.Router, logger *zap.Logger, usersCollection, productsCollection *mongo.Collection) {
+func New(r chi.Router, logger *zap.Logger, usersCollection, productsCollection, chatsCollection *mongo.Collection) {
 
 	userService := controllers.NewUserService(logger, usersCollection)
 	productService := controllers.NewProductService(logger, productsCollection)
+	chatService := controllers.NewChatServer(logger, chatsCollection)
 
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("ok"))
@@ -37,4 +38,11 @@ func New(r chi.Router, logger *zap.Logger, usersCollection, productsCollection *
 		r.Post("/", userService.AddProductToCart)
 		r.Delete("/", userService.RemoveProductFromCart)
 	})
+
+	r.Route("/ws", func(r chi.Router) {
+		r.Use(middleware.JwtMiddleware)
+		r.Post("/", chatService.HandleWS)
+		r.Get("/chats", chatService.GetMessages)
+	})
+
 }
